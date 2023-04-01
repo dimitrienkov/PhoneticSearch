@@ -1,0 +1,21 @@
+{
+  "name": "dimitrienkov/phoneticsearch",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vadim",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "name": "src",
+    "psr-4": {
+      "PhoneticSearch\\": "src"
+    }
+  }
+}
