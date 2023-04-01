@@ -7,18 +7,29 @@ use ReflectionException;
 
 class StringVariations
 {
+    //Массив генераторов, с помощью которых будет происходит создание вариаций запроса (useGenerators для переопределения)
     private array $generators = [
         \PhoneticSearch\Generators\DropVowels::class,
         \PhoneticSearch\Generators\StringSplitting::class,
         \PhoneticSearch\Generators\Translit::class,
-    ]; //Массив генераторов, с помощью которых будет происходит создание вариаций запроса (useGenerators для переопределения)
+        \PhoneticSearch\Generators\RuWordInEnLayout::class,
+    ];
 
-    private bool $considerTranslitConversion = false; //Учитывать преобразование результата транслитерации
+    //Учитывать преобразование результата транслитерации
+    private bool $considerTranslitConversion = false;
 
-    private int $minLen = 3; //Минимальная длина строки для преобразования
+    //Учитывать преобразование резульатат преобразования русского слова на англ. раскладке
+    private bool $considerRuWordsInEnLayout = false;
+
+    //Уникализация результатов
+    private bool $uniqueResults = false;
+
+    //Минимальная длина строки для преобразования
+    private int $minLen = 3;
 
     /**
      * @param string $word
+     * @param bool $enableAddWordToResult
      * @return array
      *
      * Метод создаёт массив слов для поиска по изначальному слову используя генераторы (Generators)
@@ -28,18 +39,20 @@ class StringVariations
      * Метод предоставит готовый массив строк, который поможет найти 'абрикос' в БД
      */
 
-    private function generate(string $word): ?array
+    private function generate(string $word, bool $enableAddWordToResult = true): ?array
     {
         if (!$word) {
             return null;
         }
 
-        $arResult = [
-            [
-                'string' => $word,
-                'relevance' => 1
-            ]
-        ];
+        if ($enableAddWordToResult) {
+            $arResult = [
+                [
+                    'string' => $word,
+                    'relevance' => 1
+                ]
+            ];
+        }
 
         if (mb_strlen($word) < $this->minLen) {
             return $arResult;
@@ -80,7 +93,18 @@ class StringVariations
 
         if ($this->considerTranslitConversion && $isEnglishWord) {
             if ($translitedWord = Language::translit($word)) {
-                if ($newResult = $this->generate($translitedWord)) {
+                if ($newResult = $this->generate($translitedWord, false)) {
+                    $result = [
+                        ...$result,
+                        ...$newResult
+                    ];
+                }
+            }
+        }
+
+        if ($this->considerRuWordsInEnLayout && $isEnglishWord) {
+            if ($fixedWord = Language::convertRuStringInEnLayout($word)) {
+                if ($newResult = $this->generate($fixedWord, false)) {
                     $result = [
                         ...$result,
                         ...$newResult
@@ -119,6 +143,10 @@ class StringVariations
             }
         }
 
+        if ($this->uniqueResults) {
+            $arResult = array_diff_assoc($arResult, array_unique($arResult));
+        }
+
         return $arResult;
     }
 
@@ -135,6 +163,32 @@ class StringVariations
     public function considerTranslitConversion(bool $flag = true): void
     {
         $this->considerTranslitConversion = $flag;
+    }
+
+    /**
+     * @param bool $flag
+     * @return void
+     *
+     * Метод включае учёт резульатат преобразования русского слова введенного в англ. раслкладке
+     *
+     * Т.е. если определено, что слово введено в английской раскладке, происходит повторная генерация вариаций для него
+     */
+
+    public function considerRuWordsInEnLayout(bool $flag = true): void
+    {
+        $this->considerRuWordsInEnLayout = $flag;
+    }
+
+    /**
+     * @param bool $flag
+     * @return void
+     *
+     * Метод включает/выключает уникализацию полученных результатов
+     */
+
+    public function setUniqueResults(bool $flag = true): void
+    {
+        $this->uniqueResults = $flag;
     }
 
     /**

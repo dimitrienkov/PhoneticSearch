@@ -6,7 +6,8 @@ use PhoneticSearch\GeneratorInterface;
 
 class StringSplitting implements GeneratorInterface
 {
-    private int $minLen = 6; //Минимальная длина слова для преобразования
+    //Минимальная длина слова для преобразования
+    private int $minLen = 6;
 
     /**
      * @param string $word

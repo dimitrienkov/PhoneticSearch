@@ -6,11 +6,14 @@ use PhoneticSearch\GeneratorInterface;
 
 class DropVowels implements GeneratorInterface
 {
-    private int $relevance = 1; //Индекс релевантности результата
+    //Индекс релевантности результата
+    private int $relevance = 1;
 
-    private string $charsVowels = 'ауоыэяюёиеьъ'; //Список символов которые буду удалены из строки
+    //Строка символов для регулярного выражения для удаления из слова
+    private string $charsVowels = 'ауоыэяюёиеьъ';
 
-    private int $minLen = 3; //Минимальная длина слова для преобразования
+    //Минимальная длина слова для преобразования
+    private int $minLen = 3;
 
     /**
      * @param string $word

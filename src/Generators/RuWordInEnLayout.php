@@ -5,7 +5,7 @@ namespace PhoneticSearch\Generators;
 use PhoneticSearch\GeneratorInterface;
 use PhoneticSearch\Language;
 
-class Translit implements GeneratorInterface
+class RuWordInEnLayout implements GeneratorInterface
 {
     //Индекс релевантности результата
     private int $relevance = 1;
@@ -14,12 +14,12 @@ class Translit implements GeneratorInterface
      * @param string $word
      * @return string|null
      *
-     * Метод производит транслитерацию слово используя заданный массив $arReplace
+     * Метод прозводит преобразование русского слова, набранного в английской раскладке
      */
 
     public function getString(string $word): ?string
     {
-        $newWord = Language::translit($word);
+        $newWord = Language::convertRuStringInEnLayout($word);
 
         if (!$newWord || $newWord == $word) {
             return null;
@@ -30,7 +30,7 @@ class Translit implements GeneratorInterface
 
     /**
      * @param string $word
-     * @return array|null
+     * @return string|array|null
      *
      *  Метод возвращает результат преобразования в виде массиве содеражего итоговое слово с индексом релевантности
      */
