@@ -2,38 +2,47 @@
 
 namespace PhoneticSearch\Generators;
 
+use PhoneticSearch\GeneratorInterface;
+
 class DropVowels implements GeneratorInterface
 {
     private int $relevance = 1; //Индекс релевантности результата
 
-    private string $charsVowels = 'ауоыэяюёиеьъ';
+    private string $charsVowels = 'ауоыэяюёиеьъ'; //Список символов которые буду удалены из строки
 
-    private int $minLen = 3;
+    private int $minLen = 3; //Минимальная длина слова для преобразования
 
     /**
-     * @param array $params
+     * @param string $word
+     * @return string|null
+     *
+     *  Метод удаляет все гласные буквы из строки (список гласных букв настраивается в свойстве removeVowels)
      */
-    public function __construct(array $params = [])
+
+    public function getString(string $word): ?string
     {
-        if ($params) {
-            foreach ($params as $key => $value) {
-                $this->{$key} = $value;
-            }
+        $word = mb_strtolower($word);
+        $word = preg_replace(sprintf("/[%s]/ui", $this->charsVowels), '', $word);
+
+        if (mb_strlen($word) < $this->minLen) {
+            return null;
         }
+
+        return $word;
     }
 
     /**
      * @param string $word
      * @return array|null
      *
-     *  Метод удаляет все гласные буквы из строки (список гласных букв настраивается в свойстве removeVowels)
+     *  Метод возвращает результат преобразования в виде массиве содеражего итоговое слово с индексом релевантности
      */
+
     public function getResult(string $word): ?array
     {
-        $word = mb_strtolower($word);
-        $word = preg_replace("/[{$this->charsVowels}]/ui", '', $word);
+        $word = $this->getString($word);
 
-        if (mb_strlen($word) < $this->minLen) {
+        if (!$word) {
             return null;
         }
 
@@ -42,5 +51,4 @@ class DropVowels implements GeneratorInterface
             'relevance' => $this->relevance,
         ];
     }
-
 }

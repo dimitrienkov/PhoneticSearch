@@ -2,38 +2,20 @@
 
 namespace PhoneticSearch;
 
-use Exception;
-use PhoneticSearch\Generators\GeneratorInterface;
 use ReflectionClass;
 use ReflectionException;
 
-class WordsGenerator
+class StringVariations
 {
-    private string $translitClass = \PhoneticSearch\Generators\Translit::class;
-
     private array $generators = [
         \PhoneticSearch\Generators\DropVowels::class,
         \PhoneticSearch\Generators\StringSplitting::class,
-    ];
+        \PhoneticSearch\Generators\Translit::class,
+    ]; //Массив генераторов, с помощью которых будет происходит создание вариаций запроса (useGenerators для переопределения)
 
-    /**
-     * @throws Exception
-     */
-    public function __construct()
-    {
-        $arGenerators = [
-            ...$this->generators,
-            $this->translitClass
-        ];
+    private bool $considerTranslitConversion = false; //Учитывать преобразование результата транслитерации
 
-        try {
-            $this->useGenerators($arGenerators);
-        } catch (Exception $e) {
-            var_dump($e);
-
-            throw new Exception($e);
-        }
-    }
+    private int $minLen = 3; //Минимальная длина строки для преобразования
 
     /**
      * @param string $word
@@ -48,12 +30,20 @@ class WordsGenerator
 
     private function generate(string $word): ?array
     {
+        if (!$word) {
+            return null;
+        }
+
         $arResult = [
             [
                 'string' => $word,
                 'relevance' => 1
             ]
         ];
+
+        if (mb_strlen($word) < $this->minLen) {
+            return $arResult;
+        }
 
         $word = trim($word);
 
@@ -72,18 +62,6 @@ class WordsGenerator
             }
         }
 
-        $translitInstance = new $this->translitClass;
-
-        if ($translitInstance->isEnglish($word)) {
-            $translitedWord = $translitInstance->getString($word);
-            $result = $this->generate($translitedWord);
-
-            $arResult = [
-                ...$arResult,
-                ...$result
-            ];
-        }
-
         return $arResult;
     }
 
@@ -97,6 +75,19 @@ class WordsGenerator
     public function generateFromWord(string $word): ?array
     {
         $result = $this->generate($word);
+
+        $isEnglishWord = Language::isEnglish($word);
+
+        if ($this->considerTranslitConversion && $isEnglishWord) {
+            if ($translitedWord = Language::translit($word)) {
+                if ($newResult = $this->generate($translitedWord)) {
+                    $result = [
+                        ...$result,
+                        ...$newResult
+                    ];
+                }
+            }
+        }
 
         return $result ?: null;
     }
@@ -132,6 +123,21 @@ class WordsGenerator
     }
 
     /**
+     * @param bool $flag
+     * @return void
+     *
+     * Метод включает учет результата транслитерации слова
+     *
+     * Т.е. если определено, что слово введено на английском, происходит попытка транслитерации слова,
+     * и повторной генерации с помощью всех доступных методов для полученного слова на русском языке
+     */
+
+    public function considerTranslitConversion(bool $flag = true): void
+    {
+        $this->considerTranslitConversion = $flag;
+    }
+
+    /**
      * @param array $generators
      * @return void
      *
@@ -153,5 +159,4 @@ class WordsGenerator
 
         $this->generators = $arGenerators;
     }
-
 }

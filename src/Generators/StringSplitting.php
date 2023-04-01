@@ -2,9 +2,35 @@
 
 namespace PhoneticSearch\Generators;
 
+use PhoneticSearch\GeneratorInterface;
+
 class StringSplitting implements GeneratorInterface
 {
-    private int $minLen = 6;
+    private int $minLen = 6; //Минимальная длина слова для преобразования
+
+    /**
+     * @param string $word
+     * @return string|null
+     *
+     * В данном случае данный метод избыточный,
+     * т.к. изначально происходит генерация массива генераций на основнании одного слова
+     */
+
+    public function getString(string $word): ?string
+    {
+        // TODO: Implement getString() method.
+
+        return null;
+    }
+
+    /**
+     * @param string $word
+     * @return array|null
+     *
+     * Метод генерирует массив, разбивая слово на подстроки с помощью метода splitString
+     * Индекс релевантности меняется в зависимости от длины исходного слова
+     * Чем больше размер слова - тем на более длинные подстроки его можно разбить, тем точнее будет вхождение
+     */
 
     public function getResult(string $word): ?array
     {
@@ -37,6 +63,14 @@ class StringSplitting implements GeneratorInterface
         return $arResult;
     }
 
+    /**
+     * @param string $word
+     * @param int $len
+     * @return array|null
+     *
+     * Метод разбивает слово на массив подстрок заданной длины
+     */
+
     private function splitString(string $word, int $len): ?array
     {
         if (!$word || !$len) {
@@ -61,12 +95,13 @@ class StringSplitting implements GeneratorInterface
     }
 
     /**
-     * @param string $string
+     * @param array $syllables
      * @param int $relevance
      * @return array|null
      *
      * Метод генерирует массив с результатом, содеражащий строку результата и индекст релевентности
      */
+
     private function genResult(array $syllables, int $relevance): ?array
     {
         if (!$syllables || !$relevance) {

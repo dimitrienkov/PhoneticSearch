@@ -2,10 +2,12 @@
 
 require 'vendor/autoload.php';
 
-$wordsGenerator = new \PhoneticSearch\WordsGenerator();
+$stringVariations = new \PhoneticSearch\StringVariations();
+$stringVariations->considerTranslitConversion();
+
 
 $string = 'abrikos';
-$result = $wordsGenerator->generateFromString($string);
+$result = $stringVariations->generateFromString($string);
 
 echo '<pre>';
 print_r($result);
