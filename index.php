@@ -4,7 +4,8 @@ require 'vendor/autoload.php';
 
 $wordsGenerator = new \PhoneticSearch\WordsGenerator();
 
-$result = $wordsGenerator->generate('проверка генерации');
+$string = 'abrikos';
+$result = $wordsGenerator->generateFromString($string);
 
 echo '<pre>';
 print_r($result);

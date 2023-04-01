@@ -4,11 +4,13 @@ namespace PhoneticSearch\Generators;
 
 interface GeneratorInterface
 {
+
     /**
-     * @param string $string
-     * @return string|null
+     * @param string $word
+     * @return string|array|null
      *
      * Метод для получения преобразованной строки
      */
-    public function getString(string $string): ?string;
+    public function getResult(string $word);
+
 }

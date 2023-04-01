@@ -4,7 +4,9 @@ namespace PhoneticSearch\Generators;
 
 class DropVowels implements GeneratorInterface
 {
-    private string $removeVowels = 'ауоыэяюёиеьъ';
+    private int $relevance = 1; //Индекс релевантности результата
+
+    private string $charsVowels = 'ауоыэяюёиеьъ';
 
     private int $minLen = 3;
 
@@ -21,20 +23,24 @@ class DropVowels implements GeneratorInterface
     }
 
     /**
-     * @param string $string
-     * @return string|null
+     * @param string $word
+     * @return array|null
      *
      *  Метод удаляет все гласные буквы из строки (список гласных букв настраивается в свойстве removeVowels)
      */
-    public function getString(string $string): ?string
+    public function getResult(string $word): ?array
     {
-        $string = mb_strtolower($string);
-        $string = preg_replace("/[{$this->removeVowels}]/ui", '', $string);
+        $word = mb_strtolower($word);
+        $word = preg_replace("/[{$this->charsVowels}]/ui", '', $word);
 
-        if (mb_strlen($string) < $this->minLen) {
+        if (mb_strlen($word) < $this->minLen) {
             return null;
         }
 
-        return $string;
+        return [
+            'string' => $word,
+            'relevance' => $this->relevance,
+        ];
     }
+
 }

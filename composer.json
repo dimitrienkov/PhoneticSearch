@@ -1,15 +1,16 @@
 {
   "name": "dimitrienkov/phoneticsearch",
-  "description": "description",
+  "description": "One of the implementations of phonetic search (search with errors) in Russian",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "GPL-3.0+",
   "authors": [
     {
-      "name": "Vadim",
-      "email": "email@example.com"
+      "name": "Vadim Dimitrienko",
+      "email": "dimitrienkov0@gmail.com"
     }
   ],
   "require": {
+    "php": ">=7.4",
     "ext-mbstring": "*"
   },
   "autoload": {
