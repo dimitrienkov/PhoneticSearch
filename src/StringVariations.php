@@ -14,6 +14,7 @@ class StringVariations
         \PhoneticSearch\Generators\Translit::class,
         \PhoneticSearch\Generators\RuWordInEnLayout::class,
         \PhoneticSearch\Generators\DropBackWords::class,
+        \PhoneticSearch\Generators\YandexSpeller::class,
     ];
 
     //Учитывать преобразование результата транслитерации
@@ -135,7 +136,6 @@ class StringVariations
         if ($words = explode(' ', $string)) {
             foreach ($words as $word) {
                 if ($result = $this->generateFromWord($word)) {
-
                     $arResult = [
                         ...$arResult,
                         ...$result

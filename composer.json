@@ -11,7 +11,9 @@
   ],
   "require": {
     "php": ">=7.4",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-curl": "*",
+    "ext-json": "*"
   },
   "autoload": {
     "name": "src",
