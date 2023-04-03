@@ -8,7 +8,7 @@ $stringVariations->considerRuWordsInEnLayout();
 $stringVariations->setUniqueResults();
 
 
-$string = 'f,hbrjc';
+$string = 'f,hbrjcjdsq';
 $result = $stringVariations->generateFromString($string);
 
 echo '<pre>';

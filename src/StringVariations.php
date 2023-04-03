@@ -13,6 +13,7 @@ class StringVariations
         \PhoneticSearch\Generators\StringSplitting::class,
         \PhoneticSearch\Generators\Translit::class,
         \PhoneticSearch\Generators\RuWordInEnLayout::class,
+        \PhoneticSearch\Generators\DropBackWords::class,
     ];
 
     //Учитывать преобразование результата транслитерации

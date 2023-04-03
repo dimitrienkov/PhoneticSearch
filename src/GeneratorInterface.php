@@ -8,7 +8,7 @@ interface GeneratorInterface
      * @param string $word
      * @return string|null
      *
-     * Метол для получения преобразованной строки
+     * Метод для получения преобразованной строки
      */
 
     public function getString(string $word): ?string;
